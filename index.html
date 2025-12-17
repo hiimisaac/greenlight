@@ -46,27 +46,33 @@
             z-index: -1;
             opacity: 0.4;
         }
+        
         /* Demo Transitions */
         .demo-screen {
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
-            background-color: white;
+            backface-visibility: hidden; 
         }
+
         .hidden-screen {
             opacity: 0;
             pointer-events: none;
             z-index: 0;
+            transform: scale(0.95);
         }
+
         .active-screen {
             opacity: 1;
             pointer-events: auto;
-            z-index: 10;
+            z-index: 50;
+            transform: scale(1);
         }
+
         .notification-toast {
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
         }
     </style>
 </head>
@@ -77,7 +83,10 @@
             <div class="w-4 h-4 bg-emerald-600 rounded-full"></div>
             <span class="font-bold text-lg tracking-tight">Greenlight</span>
         </div>
-        <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">Pricing</a>
+        <div class="flex items-center gap-6">
+            <a href="#about" class="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors hidden md:block">About</a>
+            <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">Pricing</a>
+        </div>
     </nav>
 
     <section class="relative pt-16 pb-24 px-6 lg:pt-32 lg:pb-32 overflow-hidden">
@@ -119,7 +128,7 @@
 
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 
-                <div class="space-y-8 order-2 lg:order-1">
+                <div class="space-y-6 order-2 lg:order-1 relative">
                     
                     <div id="step-1-ctrl" class="p-6 bg-white rounded-xl border-2 border-emerald-500 shadow-md transition-all duration-300 transform">
                         <div class="flex items-center justify-between mb-4">
@@ -151,8 +160,17 @@
                         <h3 class="text-xl font-bold text-slate-900 mb-2">Cast Your Vote</h3>
                         <p class="text-slate-600 text-sm">Review the PDF preview and tap the big green button.</p>
                     </div>
-                    
-                    <button onclick="resetDemo()" id="reset-btn" class="hidden text-sm text-slate-400 hover:text-slate-600 underline pl-6">Reset Demo</button>
+
+                    <div id="step-4-ctrl" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl border-2 border-emerald-500 z-50 flex flex-col items-center justify-center text-center p-6 hidden">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">That was fast.</h3>
+                        <p class="text-slate-600 mb-6">You just saved yourself a 10-email thread.</p>
+                        <button onclick="resetDemo()" class="text-emerald-600 font-bold hover:text-emerald-700 underline">
+                            Replay Demo
+                        </button>
+                    </div>
 
                 </div>
 
@@ -167,7 +185,7 @@
                                 <div class="text-white text-6xl font-thin text-center z-10 mb-4 tracking-tighter">9:41</div>
                                 <div class="text-white text-lg font-medium text-center z-10 opacity-80">Wednesday, Oct 24</div>
                                 
-                                <div id="notification" onclick="openApp()" class="mt-8 mx-2 bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-xl z-20 cursor-pointer transform translate-y-[-150%] opacity-0 notification-toast hover:scale-105">
+                                <div id="notification" onclick="openApp()" class="mt-8 mx-2 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl z-20 cursor-pointer transform translate-y-[-150%] opacity-0 notification-toast hover:scale-105 border border-slate-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex items-center gap-2">
                                             <div class="w-5 h-5 bg-emerald-600 rounded flex items-center justify-center">
@@ -182,7 +200,7 @@
                                 </div>
                             </div>
 
-                            <div id="screen-app" class="demo-screen hidden-screen bg-slate-50 flex flex-col relative">
+                            <div id="screen-app" class="demo-screen hidden-screen bg-slate-50 flex flex-col relative z-20">
                                 <div class="bg-white px-6 pt-12 pb-4 border-b border-slate-100 flex justify-between items-center">
                                     <div class="font-bold text-lg text-slate-900">Greenlight</div>
                                     <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">JD</div>
@@ -215,7 +233,7 @@
                                 </div>
                             </div>
 
-                            <div id="screen-success" class="demo-screen hidden-screen bg-emerald-600 flex flex-col items-center justify-center text-white px-6 relative overflow-hidden">
+                            <div id="screen-success" class="demo-screen hidden-screen bg-emerald-600 flex flex-col items-center justify-center text-white px-6 relative overflow-hidden z-30">
                                 <div class="absolute top-10 left-10 w-2 h-2 bg-yellow-300 rounded-full opacity-50"></div>
                                 <div class="absolute bottom-20 right-10 w-3 h-3 bg-white rounded-full opacity-30"></div>
                                 <div class="absolute top-1/2 left-4 w-2 h-2 bg-emerald-300 rounded-full opacity-60"></div>
@@ -251,10 +269,10 @@
 
             <div class="text-center mb-16 relative z-10">
                 <h2 class="text-3xl md:text-4xl font-bold text-white">The E.D. Dashboard</h2>
-                <p class="text-slate-400 mt-2 text-lg">Clean, focused, and faster than chasing emails.</p>
+                <p class="text-slate-400 mt-2 text-lg">Manage Votes, Events, and Sentiment in one place.</p>
             </div>
 
-            <div class="relative z-10 rounded-xl overflow-hidden shadow-2xl border border-slate-700 bg-white max-w-5xl mx-auto">
+            <div class="relative z-10 rounded-xl overflow-hidden shadow-2xl border border-slate-700 bg-white max-w-6xl mx-auto">
                  <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex items-center gap-4">
                     <div class="flex gap-1.5">
                         <div class="w-3 h-3 rounded-full bg-slate-300"></div>
@@ -267,7 +285,7 @@
                     </div>
                 </div>
 
-                <div class="flex h-[500px] bg-slate-50">
+                <div class="flex min-h-[600px] bg-slate-50">
                     <div class="w-64 bg-white border-r border-slate-100 p-6 hidden md:flex flex-col">
                         <div class="flex items-center gap-2 mb-10">
                             <div class="w-6 h-6 bg-emerald-600 rounded-full"></div>
@@ -275,39 +293,131 @@
                         </div>
                         <div class="space-y-1">
                             <a href="#" class="flex items-center gap-3 px-3 py-2 bg-emerald-50 text-emerald-700 font-medium rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                Active Votes
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                Dashboard
                             </a>
                             <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                                Archived
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                Votes
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Events (RSVP)
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Pulse Checks
                             </a>
                         </div>
                     </div>
 
                     <div class="flex-1 p-6 md:p-10 overflow-y-auto">
                         <div class="flex justify-between items-center mb-8">
-                            <h3 class="text-2xl font-bold text-slate-900">Active Votes</h3>
-                            <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition">
-                                + New Vote
+                            <h3 class="text-2xl font-bold text-slate-900">Good morning, Sarah.</h3>
+                            <button class="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition shadow-sm">
+                                + Create New
                             </button>
                         </div>
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">IN PROGRESS</span>
-                                    <h4 class="text-lg font-bold text-slate-900 mt-2">Nov 2023 Board Minutes</h4>
-                                    <p class="text-sm text-slate-500">Sent Oct 24 &middot; Due Oct 27</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition col-span-1 md:col-span-2">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 bg-emerald-100 rounded-lg text-emerald-600">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-bold text-slate-900">Nov 2023 Board Minutes</h4>
+                                            <p class="text-sm text-slate-500">Official Vote &middot; Due Oct 27</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-slate-900">4 / 7</div>
+                                        <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">IN PROGRESS</span>
+                                    </div>
                                 </div>
-                                <div class="text-right">
-                                    <div class="text-2xl font-bold text-slate-900">4 / 7</div>
-                                    <div class="text-sm text-slate-500">Voted</div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 mb-4">
+                                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 57%"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-slate-500">Waiting on 3 members.</span>
+                                    <span class="text-emerald-600 font-medium cursor-pointer hover:underline flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Nudge sent today
+                                    </span>
                                 </div>
                             </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2.5 mb-4">
-                                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 57%"></div>
+
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 bg-purple-100 rounded-lg text-purple-600">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-md font-bold text-slate-900">Ticket Price Increase</h4>
+                                            <p class="text-sm text-slate-500">Pulse Check &middot; Ends Tomorrow</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-sm text-slate-700 mb-4 font-medium">"Should we raise Gala tickets to $150?"</p>
+                                
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-emerald-700 font-semibold">Yes (Agreed)</span>
+                                            <span class="text-slate-500">5 votes</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2">
+                                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 71%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-red-700 font-semibold">No (Concerned)</span>
+                                            <span class="text-slate-500">2 votes</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2">
+                                            <div class="bg-red-400 h-2 rounded-full" style="width: 29%"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-sm text-slate-500">Waiting on 3 members. <span class="text-emerald-600 font-medium cursor-pointer hover:underline">Nudge sent.</span></span>
+
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-md font-bold text-slate-900">Annual Gala Dinner</h4>
+                                            <p class="text-sm text-slate-500">Dec 15th @ City Club</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2 text-center mb-4">
+                                    <div class="bg-emerald-50 rounded-lg p-2">
+                                        <div class="text-xl font-bold text-emerald-600">8</div>
+                                        <div class="text-[10px] text-emerald-800 uppercase font-bold">Going</div>
+                                    </div>
+                                    <div class="bg-slate-50 rounded-lg p-2">
+                                        <div class="text-xl font-bold text-slate-500">2</div>
+                                        <div class="text-[10px] text-slate-500 uppercase font-bold">No Go</div>
+                                    </div>
+                                    <div class="bg-amber-50 rounded-lg p-2">
+                                        <div class="text-xl font-bold text-amber-600">1</div>
+                                        <div class="text-[10px] text-amber-800 uppercase font-bold">Pending</div>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50">
+                                    Send Reminder to Pending
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -315,34 +425,127 @@
         </div>
     </section>
 
-    <section class="py-20 bg-white">
+    <section class="py-20 bg-slate-50">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold text-slate-900 mb-6">Audit-Ready in Real Time.</h2>
-            <div class="grid md:grid-cols-3 gap-6 text-left">
-                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-slate-900 mb-2">Timestamped</h4>
+            <div class="grid md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto">
+                <div class="p-6 bg-white rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Timestamped
+                    </h4>
                     <p class="text-sm text-slate-600">Every vote logs UTC time and IP address for legal validity.</p>
                 </div>
-                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-slate-900 mb-2">PDF Export</h4>
+                <div class="p-6 bg-white rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        PDF Export
+                    </h4>
                     <p class="text-sm text-slate-600">One click generates a "Certificate of Resolution" for auditors.</p>
                 </div>
-                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-slate-900 mb-2">$39/mo Flat</h4>
-                    <p class="text-sm text-slate-600">Unlimited users. Unlimited votes. No hidden fees.</p>
-                </div>
-            </div>
-            <div class="mt-12">
-                <button class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-800 transition shadow-xl">
-                    Start Your Free Trial
-                </button>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 border-t border-slate-100 bg-white">
-        <div class="max-w-7xl mx-auto px-6 text-center text-sm text-slate-400">
-            &copy; 2024 Greenlight Tools, LLC. Built by a skeptical engineer in NC.
+    <section id="pricing" class="py-24 px-6 bg-white border-t border-slate-100">
+        <div class="max-w-md mx-auto">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden ring-1 ring-slate-900/5">
+                <div class="p-8 text-center border-b border-slate-50">
+                    <h3 class="text-lg font-medium text-slate-500 uppercase tracking-wide">Simple Pricing</h3>
+                    <div class="mt-4 flex items-baseline justify-center">
+                        <span class="text-5xl font-extrabold text-slate-900">$39</span>
+                        <span class="text-xl text-slate-500 ml-2">/month</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mt-2">Per organization. Cancel anytime.</p>
+                </div>
+                <div class="p-8 bg-slate-50/50">
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Unlimited Board Members</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Unlimited Votes & Polls</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Full Audit Trails (PDF Export)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Automated Email Reminders</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
+                        Start Your Free Trial
+                    </button>
+                    <p class="text-center text-xs text-slate-400 mt-4 italic">"Cheaper than one hour of your time."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 px-6 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-bold tracking-wide uppercase text-sm">About the Builder</span>
+                <h2 class="text-3xl font-bold text-slate-900 mt-2">Meet the Skeptical Engineer.</h2>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
+                <div class="flex-1 space-y-4">
+                    <p class="text-lg text-slate-700 leading-relaxed">
+                        Hi, I'm <span class="font-bold text-slate-900">Isaac</span>. I'm a software engineer based in North Carolina. I built Greenlight because I believe "Forgot Password" screens are the enemy of progress.
+                    </p>
+                    <p class="text-slate-600 leading-relaxed">
+                        I am obsessed with optimization. When I'm not writing code, I'm usually:
+                    </p>
+                    <ul class="space-y-2 text-slate-600 list-disc list-inside ml-2">
+                        <li>Trying to debug my golf swing (it's a feature, not a bug).</li>
+                        <li>Smoking the perfect rack of ribs on my Blackstone.</li>
+                        <li>Rollerblading around Washington, NC to clear my head.</li>
+                        <li>Stressing over the Carolina Hurricanes (Go Canes!).</li>
+                    </ul>
+                    <p class="text-slate-600 pt-2 italic">
+                        I built this tool to be the thing I wish I had: fast, reliable, and zero-friction.
+                    </p>
+                </div>
+                
+                <div class="w-full md:w-auto bg-slate-900 text-white p-6 rounded-xl text-center shadow-xl flex-shrink-0">
+                    <div class="mb-4">
+                        <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h4 class="font-bold text-lg">Have a question?</h4>
+                        <p class="text-slate-400 text-sm">I actually answer my emails.</p>
+                    </div>
+                    <a href="mailto:greenlight@isaacbarham.com" class="block bg-white text-slate-900 font-bold py-2 px-4 rounded-lg hover:bg-emerald-50 transition-colors text-sm">
+                        greenlight@isaacbarham.com
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 border-t border-slate-200 bg-white">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
+                <span class="font-bold text-slate-900">Greenlight</span>
+                <span class="text-slate-400 text-sm ml-2">&copy; 2024 Greenlight Tools, LLC.</span>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                 <a href="https://www.threads.net/@greenlight.app" target="_blank" class="flex items-center gap-2 text-slate-500 hover:text-emerald-600 transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.004 0C5.378 0 0 5.378 0 12.004c0 6.627 5.378 12.004 12.004 12.004 6.626 0 12.004-5.377 12.004-12.004C24.008 5.378 18.63 0 12.004 0Zm5.448 16.327c-.23.364-.478.711-.741 1.042-1.332 1.668-3.327 2.147-4.706 2.147-2.903 0-4.885-2.094-4.885-5.16 0-3.076 2.142-5.187 5.166-5.187 1.838 0 3.23.834 3.96 1.876h1.565c-.792-1.928-2.733-3.126-5.525-3.126-3.832 0-6.726 2.682-6.726 6.437 0 3.633 2.76 6.42 6.726 6.42 2.636 0 4.908-1.282 5.922-3.449h-1.576c-.078.083.52.078.82.078v-.078Zm-5.448-2.61c-1.26 0-2.115-.99-2.115-2.55 0-1.554.855-2.544 2.115-2.544 1.255 0 2.11.99 2.11 2.544 0 1.56-.855 2.55-2.11 2.55Z" /></svg>
+                    <span class="text-sm font-medium">Threads</span>
+                </a>
+                
+                <span class="text-sm text-slate-400">
+                    Built by a skeptical engineer in NC.
+                </span>
+            </div>
         </div>
     </footer>
 
@@ -382,7 +585,8 @@
             document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
             document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             
-            document.getElementById('reset-btn').classList.remove('hidden');
+            // Show the "Success" Overlay on Controls
+            document.getElementById('step-4-ctrl').classList.remove('hidden');
 
             // Phone Action
             document.getElementById('screen-app').classList.remove('active-screen');
@@ -403,7 +607,8 @@
             document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
 
-            document.getElementById('reset-btn').classList.add('hidden');
+            // Hide the success overlay
+            document.getElementById('step-4-ctrl').classList.add('hidden');
 
             // Reset Phone Screens
             document.getElementById('screen-success').classList.remove('active-screen');
