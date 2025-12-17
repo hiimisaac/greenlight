@@ -46,27 +46,34 @@
             z-index: -1;
             opacity: 0.4;
         }
+        
         /* Demo Transitions */
         .demo-screen {
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
-            background-color: white;
+            /* Ensure background is solid so we don't see screens behind it */
+            backface-visibility: hidden; 
         }
+
         .hidden-screen {
             opacity: 0;
             pointer-events: none;
             z-index: 0;
+            transform: scale(0.95); /* Slight shrink effect for depth */
         }
+
         .active-screen {
             opacity: 1;
             pointer-events: auto;
-            z-index: 10;
+            z-index: 50; /* Force to top */
+            transform: scale(1);
         }
+
         .notification-toast {
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
         }
     </style>
 </head>
@@ -119,7 +126,7 @@
 
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 
-                <div class="space-y-8 order-2 lg:order-1">
+                <div class="space-y-6 order-2 lg:order-1 relative">
                     
                     <div id="step-1-ctrl" class="p-6 bg-white rounded-xl border-2 border-emerald-500 shadow-md transition-all duration-300 transform">
                         <div class="flex items-center justify-between mb-4">
@@ -151,8 +158,17 @@
                         <h3 class="text-xl font-bold text-slate-900 mb-2">Cast Your Vote</h3>
                         <p class="text-slate-600 text-sm">Review the PDF preview and tap the big green button.</p>
                     </div>
-                    
-                    <button onclick="resetDemo()" id="reset-btn" class="hidden text-sm text-slate-400 hover:text-slate-600 underline pl-6">Reset Demo</button>
+
+                    <div id="step-4-ctrl" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl border-2 border-emerald-500 z-50 flex flex-col items-center justify-center text-center p-6 hidden">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">That was fast.</h3>
+                        <p class="text-slate-600 mb-6">You just saved yourself a 10-email thread.</p>
+                        <button onclick="resetDemo()" class="text-emerald-600 font-bold hover:text-emerald-700 underline">
+                            Replay Demo
+                        </button>
+                    </div>
 
                 </div>
 
@@ -167,7 +183,7 @@
                                 <div class="text-white text-6xl font-thin text-center z-10 mb-4 tracking-tighter">9:41</div>
                                 <div class="text-white text-lg font-medium text-center z-10 opacity-80">Wednesday, Oct 24</div>
                                 
-                                <div id="notification" onclick="openApp()" class="mt-8 mx-2 bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-xl z-20 cursor-pointer transform translate-y-[-150%] opacity-0 notification-toast hover:scale-105">
+                                <div id="notification" onclick="openApp()" class="mt-8 mx-2 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-xl z-20 cursor-pointer transform translate-y-[-150%] opacity-0 notification-toast hover:scale-105 border border-slate-200">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex items-center gap-2">
                                             <div class="w-5 h-5 bg-emerald-600 rounded flex items-center justify-center">
@@ -182,7 +198,7 @@
                                 </div>
                             </div>
 
-                            <div id="screen-app" class="demo-screen hidden-screen bg-slate-50 flex flex-col relative">
+                            <div id="screen-app" class="demo-screen hidden-screen bg-slate-50 flex flex-col relative z-20">
                                 <div class="bg-white px-6 pt-12 pb-4 border-b border-slate-100 flex justify-between items-center">
                                     <div class="font-bold text-lg text-slate-900">Greenlight</div>
                                     <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">JD</div>
@@ -215,7 +231,7 @@
                                 </div>
                             </div>
 
-                            <div id="screen-success" class="demo-screen hidden-screen bg-emerald-600 flex flex-col items-center justify-center text-white px-6 relative overflow-hidden">
+                            <div id="screen-success" class="demo-screen hidden-screen bg-emerald-600 flex flex-col items-center justify-center text-white px-6 relative overflow-hidden z-30">
                                 <div class="absolute top-10 left-10 w-2 h-2 bg-yellow-300 rounded-full opacity-50"></div>
                                 <div class="absolute bottom-20 right-10 w-3 h-3 bg-white rounded-full opacity-30"></div>
                                 <div class="absolute top-1/2 left-4 w-2 h-2 bg-emerald-300 rounded-full opacity-60"></div>
@@ -315,27 +331,63 @@
         </div>
     </section>
 
-    <section class="py-20 bg-white">
+    <section class="py-20 bg-slate-50">
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold text-slate-900 mb-6">Audit-Ready in Real Time.</h2>
-            <div class="grid md:grid-cols-3 gap-6 text-left">
-                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-slate-900 mb-2">Timestamped</h4>
+            <div class="grid md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto">
+                <div class="p-6 bg-white rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Timestamped
+                    </h4>
                     <p class="text-sm text-slate-600">Every vote logs UTC time and IP address for legal validity.</p>
                 </div>
-                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-slate-900 mb-2">PDF Export</h4>
+                <div class="p-6 bg-white rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        PDF Export
+                    </h4>
                     <p class="text-sm text-slate-600">One click generates a "Certificate of Resolution" for auditors.</p>
                 </div>
-                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
-                    <h4 class="font-bold text-slate-900 mb-2">$39/mo Flat</h4>
-                    <p class="text-sm text-slate-600">Unlimited users. Unlimited votes. No hidden fees.</p>
-                </div>
             </div>
-            <div class="mt-12">
-                <button class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-800 transition shadow-xl">
-                    Start Your Free Trial
-                </button>
+        </div>
+    </section>
+
+    <section id="pricing" class="py-24 px-6 bg-white border-t border-slate-100">
+        <div class="max-w-md mx-auto">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden ring-1 ring-slate-900/5">
+                <div class="p-8 text-center border-b border-slate-50">
+                    <h3 class="text-lg font-medium text-slate-500 uppercase tracking-wide">Simple Pricing</h3>
+                    <div class="mt-4 flex items-baseline justify-center">
+                        <span class="text-5xl font-extrabold text-slate-900">$39</span>
+                        <span class="text-xl text-slate-500 ml-2">/month</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mt-2">Per organization. Cancel anytime.</p>
+                </div>
+                <div class="p-8 bg-slate-50/50">
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Unlimited Board Members</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Unlimited Votes & Polls</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Full Audit Trails (PDF Export)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="ml-3 text-slate-700">Automated Email Reminders</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
+                        Start Your Free Trial
+                    </button>
+                    <p class="text-center text-xs text-slate-400 mt-4 italic">"Cheaper than one hour of your time."</p>
+                </div>
             </div>
         </div>
     </section>
@@ -382,7 +434,8 @@
             document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
             document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             
-            document.getElementById('reset-btn').classList.remove('hidden');
+            // Show the "Success" Overlay on Controls
+            document.getElementById('step-4-ctrl').classList.remove('hidden');
 
             // Phone Action
             document.getElementById('screen-app').classList.remove('active-screen');
@@ -403,7 +456,8 @@
             document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
 
-            document.getElementById('reset-btn').classList.add('hidden');
+            // Hide the success overlay
+            document.getElementById('step-4-ctrl').classList.add('hidden');
 
             // Reset Phone Screens
             document.getElementById('screen-success').classList.remove('active-screen');
