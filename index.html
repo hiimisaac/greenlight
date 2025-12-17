@@ -28,7 +28,23 @@
                             800: '#1e293b',
                             900: '#0f172a', // High contrast text
                         }
-                    }
+                    },
+                    animation: {
+                        blob: "blob 7s infinite",
+                        shimmer: "shimmer 2.5s linear infinite",
+                    },
+                    keyframes: {
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" },
+                        },
+                        shimmer: {
+                            "0%": { backgroundPosition: "-1000px 0" },
+                            "100%": { backgroundPosition: "1000px 0" }
+                        }
+                    },
                 }
             }
         }
@@ -40,13 +56,28 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(226, 232, 240, 0.8);
         }
-        .blob {
-            position: absolute;
-            filter: blur(40px);
-            z-index: -1;
-            opacity: 0.4;
+        
+        /* Scroll Reveal Utility Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
         }
         
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* Animation delays for blobs */
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
         /* Demo Transitions */
         .demo-screen {
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
@@ -56,32 +87,17 @@
             height: 100%;
             backface-visibility: hidden; 
         }
-
-        .hidden-screen {
-            opacity: 0;
-            pointer-events: none;
-            z-index: 0;
-            transform: scale(0.95);
-        }
-
-        .active-screen {
-            opacity: 1;
-            pointer-events: auto;
-            z-index: 50;
-            transform: scale(1);
-        }
-
-        .notification-toast {
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-        }
+        .hidden-screen { opacity: 0; pointer-events: none; z-index: 0; transform: scale(0.95); }
+        .active-screen { opacity: 1; pointer-events: auto; z-index: 50; transform: scale(1); }
+        .notification-toast { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease; }
     </style>
 </head>
-<body class="bg-white text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+<body class="bg-white text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 overflow-x-hidden">
 
-    <nav class="w-full py-6 px-6 md:px-12 flex justify-between items-center max-w-7xl mx-auto">
-        <div class="flex items-center gap-2">
-            <div class="w-4 h-4 bg-emerald-600 rounded-full"></div>
-            <span class="font-bold text-lg tracking-tight">Greenlight</span>
+    <nav class="w-full py-6 px-6 md:px-12 flex justify-between items-center max-w-7xl mx-auto reveal active">
+        <div class="flex items-center gap-2 group cursor-pointer">
+            <div class="w-4 h-4 bg-emerald-600 rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+            <span class="font-bold text-lg tracking-tight group-hover:text-emerald-600 transition-colors">Greenlight</span>
         </div>
         <div class="flex items-center gap-6">
             <a href="#about" class="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors hidden md:block">About</a>
@@ -90,24 +106,26 @@
     </nav>
 
     <section class="relative pt-16 pb-24 px-6 lg:pt-32 lg:pb-32 overflow-hidden">
-        <div class="blob bg-emerald-200 w-96 h-96 rounded-full top-0 -left-20"></div>
-        <div class="blob bg-slate-200 w-80 h-80 rounded-full bottom-0 -right-20"></div>
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
 
         <div class="max-w-3xl mx-auto text-center relative z-10">
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.1]">
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.1] reveal active">
                 Stop Chasing<br class="hidden md:block" /> Your Board.
             </h1>
-            <p class="text-xl md:text-2xl text-slate-600 mb-10 leading-relaxed font-normal">
+            <p class="text-xl md:text-2xl text-slate-600 mb-10 leading-relaxed font-normal reveal active delay-100">
                 The first board tool designed for <span class="font-semibold text-slate-900">zero friction</span>. No passwords to forget. No portals to navigate. Just one tap to get the Greenlight.
             </p>
             
-            <div class="flex flex-col items-center gap-4">
-                <a href="#demo" class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 bg-emerald-600 rounded-full hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30">
-                    Try the Demo
-                    <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            <div class="flex flex-col items-center gap-4 reveal active delay-200">
+                <a href="#demo" class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 bg-emerald-600 rounded-full hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30 overflow-hidden">
+                    <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shimmer" />
+                    <span class="relative">Try the Demo</span>
+                    <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1 relative" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                 </a>
                 
-                <div class="mt-4 flex items-center gap-2 text-sm text-slate-500 font-medium bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
+                <div class="mt-4 flex items-center gap-2 text-sm text-slate-500 font-medium bg-slate-50/80 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-100 shadow-sm hover:scale-105 transition-transform duration-300 cursor-default">
                     <div class="flex -space-x-2">
                         <div class="w-6 h-6 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-[10px] text-emerald-800 font-bold">JD</div>
                         <div class="w-6 h-6 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-[10px] text-blue-800 font-bold">SM</div>
@@ -120,7 +138,7 @@
 
     <section id="demo" class="py-24 px-6 bg-slate-50 border-y border-slate-200">
         <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-12">
+            <div class="text-center mb-12 reveal">
                 <span class="text-emerald-600 font-bold tracking-wide uppercase text-sm">Interactive Demo</span>
                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">See how fast it really is.</h2>
                 <p class="text-slate-500 mt-2">Follow the instructions to experience the flow.</p>
@@ -128,9 +146,9 @@
 
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 
-                <div class="space-y-6 order-2 lg:order-1 relative">
+                <div class="space-y-6 order-2 lg:order-1 relative reveal delay-100">
                     
-                    <div id="step-1-ctrl" class="p-6 bg-white rounded-xl border-2 border-emerald-500 shadow-md transition-all duration-300 transform">
+                    <div id="step-1-ctrl" class="p-6 bg-white rounded-xl border-2 border-emerald-500 shadow-md transition-all duration-300 transform hover:scale-[1.02]">
                         <div class="flex items-center justify-between mb-4">
                             <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded uppercase">You are the Admin</span>
                             <span class="text-xs text-slate-400">Step 1 of 3</span>
@@ -161,8 +179,8 @@
                         <p class="text-slate-600 text-sm">Review the PDF preview and tap the big green button.</p>
                     </div>
 
-                    <div id="step-4-ctrl" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl border-2 border-emerald-500 z-50 flex flex-col items-center justify-center text-center p-6 hidden">
-                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                    <div id="step-4-ctrl" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl border-2 border-emerald-500 z-50 flex flex-col items-center justify-center text-center p-6 hidden animate-in fade-in zoom-in duration-300">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 animate-bounce">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         </div>
                         <h3 class="text-2xl font-bold text-slate-900 mb-2">That was fast.</h3>
@@ -174,8 +192,8 @@
 
                 </div>
 
-                <div class="flex justify-center order-1 lg:order-2">
-                    <div class="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-4 border-slate-300 ring-1 ring-slate-900/5">
+                <div class="flex justify-center order-1 lg:order-2 reveal delay-200">
+                    <div class="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-4 border-slate-300 ring-1 ring-slate-900/5 transform transition-transform hover:scale-[1.01] duration-500">
                         <div class="absolute top-5 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-50"></div>
                         
                         <div class="w-full h-full bg-white rounded-[2.2rem] overflow-hidden relative font-sans">
@@ -210,7 +228,7 @@
                                     <h2 class="text-xl font-bold text-slate-900 leading-tight">Oct 2023 Board Meeting Minutes</h2>
                                     <p class="text-xs text-slate-500 mt-1 uppercase tracking-wide font-semibold">Due in 2 days</p>
 
-                                    <div class="mt-6 bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex items-start gap-3">
+                                    <div class="mt-6 bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex items-start gap-3 hover:bg-slate-50 transition-colors cursor-pointer">
                                         <div class="w-10 h-12 bg-red-50 border border-red-100 text-red-500 rounded flex items-center justify-center flex-shrink-0">
                                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
                                         </div>
@@ -234,9 +252,9 @@
                             </div>
 
                             <div id="screen-success" class="demo-screen hidden-screen bg-emerald-600 flex flex-col items-center justify-center text-white px-6 relative overflow-hidden z-30">
-                                <div class="absolute top-10 left-10 w-2 h-2 bg-yellow-300 rounded-full opacity-50"></div>
-                                <div class="absolute bottom-20 right-10 w-3 h-3 bg-white rounded-full opacity-30"></div>
-                                <div class="absolute top-1/2 left-4 w-2 h-2 bg-emerald-300 rounded-full opacity-60"></div>
+                                <div class="absolute top-10 left-10 w-2 h-2 bg-yellow-300 rounded-full opacity-50 animate-pulse"></div>
+                                <div class="absolute bottom-20 right-10 w-3 h-3 bg-white rounded-full opacity-30 animate-pulse"></div>
+                                <div class="absolute top-1/2 left-4 w-2 h-2 bg-emerald-300 rounded-full opacity-60 animate-pulse"></div>
 
                                 <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-xl animate-bounce">
                                     <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
@@ -263,16 +281,17 @@
         </div>
     </section>
 
-    <section class="py-24 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-6 relative">
-             <div class="blob bg-emerald-500/20 w-96 h-96 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+    <section class="py-24 bg-slate-900 relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full filter blur-[80px] animate-blob"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full filter blur-[80px] animate-blob animation-delay-2000"></div>
 
-            <div class="text-center mb-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 relative">
+            <div class="text-center mb-16 relative z-10 reveal">
                 <h2 class="text-3xl md:text-4xl font-bold text-white">The E.D. Dashboard</h2>
                 <p class="text-slate-400 mt-2 text-lg">Manage Votes, Events, and Sentiment in one place.</p>
             </div>
 
-            <div class="relative z-10 rounded-xl overflow-hidden shadow-2xl border border-slate-700 bg-white max-w-6xl mx-auto">
+            <div class="relative z-10 rounded-xl overflow-hidden shadow-2xl border border-slate-700 bg-white max-w-6xl mx-auto reveal delay-100">
                  <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex items-center gap-4">
                     <div class="flex gap-1.5">
                         <div class="w-3 h-3 rounded-full bg-slate-300"></div>
@@ -296,15 +315,15 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                                 Dashboard
                             </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg hover:translate-x-1 transition-transform">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                 Votes
                             </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg hover:translate-x-1 transition-transform">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 Events (RSVP)
                             </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg hover:translate-x-1 transition-transform">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 Pulse Checks
                             </a>
@@ -314,17 +333,17 @@
                     <div class="flex-1 p-6 md:p-10 overflow-y-auto">
                         <div class="flex justify-between items-center mb-8">
                             <h3 class="text-2xl font-bold text-slate-900">Good morning, Sarah.</h3>
-                            <button class="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition shadow-sm">
+                            <button class="bg-slate-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition shadow-sm hover:scale-105 transform duration-200">
                                 + Create New
                             </button>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition col-span-1 md:col-span-2">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 col-span-1 md:col-span-2 group">
                                 <div class="flex justify-between items-start mb-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-emerald-100 rounded-lg text-emerald-600">
+                                        <div class="p-2 bg-emerald-100 rounded-lg text-emerald-600 group-hover:bg-emerald-200 transition-colors">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         </div>
                                         <div>
@@ -338,7 +357,7 @@
                                     </div>
                                 </div>
                                 <div class="w-full bg-slate-100 rounded-full h-2.5 mb-4">
-                                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 57%"></div>
+                                    <div class="progress-bar bg-emerald-500 h-2.5 rounded-full" data-width="57%" style="width: 0%"></div>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-slate-500">Waiting on 3 members.</span>
@@ -349,10 +368,10 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                                 <div class="flex justify-between items-start mb-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-purple-100 rounded-lg text-purple-600">
+                                        <div class="p-2 bg-purple-100 rounded-lg text-purple-600 group-hover:bg-purple-200 transition-colors">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         </div>
                                         <div>
@@ -371,7 +390,7 @@
                                             <span class="text-slate-500">5 votes</span>
                                         </div>
                                         <div class="w-full bg-slate-100 rounded-full h-2">
-                                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 71%"></div>
+                                            <div class="progress-bar bg-emerald-500 h-2 rounded-full" data-width="71%" style="width: 0%"></div>
                                         </div>
                                     </div>
                                     <div>
@@ -380,16 +399,16 @@
                                             <span class="text-slate-500">2 votes</span>
                                         </div>
                                         <div class="w-full bg-slate-100 rounded-full h-2">
-                                            <div class="bg-red-400 h-2 rounded-full" style="width: 29%"></div>
+                                            <div class="progress-bar bg-red-400 h-2 rounded-full" data-width="29%" style="width: 0%"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                                 <div class="flex justify-between items-start mb-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                        <div class="p-2 bg-blue-100 rounded-lg text-blue-600 group-hover:bg-blue-200 transition-colors">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         </div>
                                         <div>
@@ -400,7 +419,7 @@
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-2 text-center mb-4">
-                                    <div class="bg-emerald-50 rounded-lg p-2">
+                                    <div class="bg-emerald-50 rounded-lg p-2 group-hover:bg-emerald-100 transition-colors">
                                         <div class="text-xl font-bold text-emerald-600">8</div>
                                         <div class="text-[10px] text-emerald-800 uppercase font-bold">Going</div>
                                     </div>
@@ -413,7 +432,7 @@
                                         <div class="text-[10px] text-amber-800 uppercase font-bold">Pending</div>
                                     </div>
                                 </div>
-                                <button class="w-full py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50">
+                                <button class="w-full py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-emerald-600 transition-colors">
                                     Send Reminder to Pending
                                 </button>
                             </div>
@@ -427,16 +446,16 @@
 
     <section class="py-20 bg-slate-50">
         <div class="max-w-4xl mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold text-slate-900 mb-6">Audit-Ready in Real Time.</h2>
-            <div class="grid md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto">
-                <div class="p-6 bg-white rounded-xl border border-slate-200">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6 reveal">Audit-Ready in Real Time.</h2>
+            <div class="grid md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto reveal delay-100">
+                <div class="p-6 bg-white rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
                     <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Timestamped
                     </h4>
                     <p class="text-sm text-slate-600">Every vote logs UTC time and IP address for legal validity.</p>
                 </div>
-                <div class="p-6 bg-white rounded-xl border border-slate-200">
+                <div class="p-6 bg-white rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
                     <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
                         <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         PDF Export
@@ -448,8 +467,8 @@
     </section>
 
     <section id="pricing" class="py-24 px-6 bg-white border-t border-slate-100">
-        <div class="max-w-md mx-auto">
-            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden ring-1 ring-slate-900/5">
+        <div class="max-w-md mx-auto reveal">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden ring-1 ring-slate-900/5 hover:-translate-y-2 transition-transform duration-500">
                 <div class="p-8 text-center border-b border-slate-50">
                     <h3 class="text-lg font-medium text-slate-500 uppercase tracking-wide">Simple Pricing</h3>
                     <div class="mt-4 flex items-baseline justify-center">
@@ -477,7 +496,7 @@
                             <span class="ml-3 text-slate-700">Automated Email Reminders</span>
                         </li>
                     </ul>
-                    <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
+                    <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg hover:shadow-xl">
                         Start Your Free Trial
                     </button>
                     <p class="text-center text-xs text-slate-400 mt-4 italic">"Cheaper than one hour of your time."</p>
@@ -488,12 +507,12 @@
 
     <section id="about" class="py-24 px-6 bg-slate-50 border-t border-slate-200">
         <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-12">
+            <div class="text-center mb-12 reveal">
                 <span class="text-emerald-600 font-bold tracking-wide uppercase text-sm">About the Builder</span>
                 <h2 class="text-3xl font-bold text-slate-900 mt-2">Meet the Skeptical Engineer.</h2>
             </div>
             
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 reveal delay-100 hover:shadow-lg transition-shadow">
                 <div class="flex-1 space-y-4">
                     <p class="text-lg text-slate-700 leading-relaxed">
                         Hi, I'm <span class="font-bold text-slate-900">Isaac</span>. I'm a software engineer based in North Carolina. I built Greenlight because I believe a nonprofit should be able to succeed in an increasingly time-consuming world.
@@ -511,9 +530,9 @@
                     </p>
                 </div>
                 
-                <div class="w-full md:w-auto bg-slate-900 text-white p-6 rounded-xl text-center shadow-xl flex-shrink-0">
+                <div class="w-full md:w-auto bg-slate-900 text-white p-6 rounded-xl text-center shadow-xl flex-shrink-0 hover:scale-105 transition-transform duration-300">
                     <div class="mb-4">
-                        <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 animate-pulse">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </div>
                         <h4 class="font-bold text-lg">Have a question?</h4>
@@ -549,29 +568,55 @@
     </footer>
 
     <script>
+        // Scroll Reveal Observer
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealOnScroll = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach(el => revealOnScroll.observe(el));
+
+            // Animate Progress Bars in Dashboard
+            const progressBars = document.querySelectorAll('.progress-bar');
+            const progressObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.getAttribute('data-width');
+                        entry.target.style.width = width;
+                        entry.target.style.transition = 'width 1.5s cubic-bezier(0.22, 1, 0.36, 1)';
+                    }
+                });
+            });
+
+            progressBars.forEach(bar => progressObserver.observe(bar));
+        });
+
+        // Demo Functionality
         function triggerNotification() {
-            // UI Updates for Control Panel
             document.getElementById('step-1-ctrl').classList.remove('border-emerald-500', 'shadow-md');
             document.getElementById('step-1-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             
             document.getElementById('step-2-ctrl').classList.remove('opacity-50', 'pointer-events-none');
             document.getElementById('step-2-ctrl').classList.add('border-emerald-500', 'shadow-md');
 
-            // Phone Action
             const notif = document.getElementById('notification');
             notif.classList.remove('translate-y-[-150%]', 'opacity-0');
             notif.classList.add('translate-y-0', 'opacity-100');
         }
 
         function openApp() {
-            // UI Updates for Control Panel
             document.getElementById('step-2-ctrl').classList.remove('border-emerald-500', 'shadow-md');
             document.getElementById('step-2-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
 
             document.getElementById('step-3-ctrl').classList.remove('opacity-50', 'pointer-events-none');
             document.getElementById('step-3-ctrl').classList.add('border-emerald-500', 'shadow-md');
 
-            // Phone Action
             document.getElementById('screen-lock').classList.remove('active-screen');
             document.getElementById('screen-lock').classList.add('hidden-screen');
             
@@ -580,14 +625,11 @@
         }
 
         function castVote() {
-            // UI Updates for Control Panel
             document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
             document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             
-            // Show the "Success" Overlay on Controls
             document.getElementById('step-4-ctrl').classList.remove('hidden');
 
-            // Phone Action
             document.getElementById('screen-app').classList.remove('active-screen');
             document.getElementById('screen-app').classList.add('hidden-screen');
 
@@ -596,7 +638,6 @@
         }
 
         function resetDemo() {
-            // Reset Controls
             document.getElementById('step-1-ctrl').classList.add('border-emerald-500', 'shadow-md');
             document.getElementById('step-1-ctrl').classList.remove('opacity-50', 'pointer-events-none', 'border-slate-100');
 
@@ -606,10 +647,8 @@
             document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
             document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
 
-            // Hide the success overlay
             document.getElementById('step-4-ctrl').classList.add('hidden');
 
-            // Reset Phone Screens
             document.getElementById('screen-success').classList.remove('active-screen');
             document.getElementById('screen-success').classList.add('hidden-screen');
             
@@ -619,7 +658,6 @@
             document.getElementById('screen-lock').classList.remove('hidden-screen');
             document.getElementById('screen-lock').classList.add('active-screen');
 
-            // Reset Notification
             const notif = document.getElementById('notification');
             notif.classList.add('translate-y-[-150%]', 'opacity-0');
             notif.classList.remove('translate-y-0', 'opacity-100');
