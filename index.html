@@ -28,24 +28,13 @@
                             800: '#1e293b',
                             900: '#0f172a', // High contrast text
                         }
-                    },
-                    animation: {
-                        'phone-cycle': 'phoneCycle 12s infinite ease-in-out',
-                    },
-                    keyframes: {
-                        // Animation sequence for the phone demo
-                        phoneCycle: {
-                            '0%, 25%': { transform: 'translateX(0%)' },      // Notification View
-                            '33%, 58%': { transform: 'translateX(-100%)' },  // Vote View
-                            '66%, 100%': { transform: 'translateX(-200%)' }, // Success View
-                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Custom utilities for that "Clean SaaS" feel */
+        /* Custom utilities */
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
@@ -57,15 +46,27 @@
             z-index: -1;
             opacity: 0.4;
         }
-        /* For the phone demo carousel */
-        .phone-screen-container {
-            display: flex;
-            width: 300%; /* 3 screens wide */
-            will-change: transform;
+        /* Demo Transitions */
+        .demo-screen {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
         }
-        .phone-screen {
-            width: 33.333%;
-            flex-shrink: 0;
+        .hidden-screen {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .active-screen {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+        .notification-toast {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
     </style>
 </head>
@@ -92,16 +93,15 @@
             </p>
             
             <div class="flex flex-col items-center gap-4">
-                <a href="#pricing" class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 bg-emerald-600 rounded-full hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600">
-                    Get Your First Vote
-                    <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                <a href="#demo" class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 bg-emerald-600 rounded-full hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30">
+                    Try the Demo
+                    <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                 </a>
                 
                 <div class="mt-4 flex items-center gap-2 text-sm text-slate-500 font-medium bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
                     <div class="flex -space-x-2">
                         <div class="w-6 h-6 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-[10px] text-emerald-800 font-bold">JD</div>
                         <div class="w-6 h-6 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-[10px] text-blue-800 font-bold">SM</div>
-                        <div class="w-6 h-6 rounded-full bg-purple-100 border-2 border-white flex items-center justify-center text-[10px] text-purple-800 font-bold">AK</div>
                     </div>
                     Trusted by 40+ NC Nonprofits
                 </div>
@@ -109,144 +109,137 @@
         </div>
     </section>
 
-    <section class="py-20 bg-slate-50 border-y border-slate-200">
-        <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-            
-            <div class="relative">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-sm mx-auto transform -rotate-2">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                    </div>
-                    <div class="space-y-3 opacity-50">
-                        <div class="h-4 bg-slate-100 rounded w-3/4"></div>
-                        <div class="h-4 bg-slate-100 rounded w-full"></div>
-                        <div class="h-4 bg-slate-100 rounded w-5/6"></div>
-                    </div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="bg-white shadow-xl rounded-lg p-4 border border-red-100 text-center transform scale-110">
-                            <div class="w-10 h-10 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                            </div>
-                            <p class="text-sm font-bold text-slate-800">Password Invalid</p>
-                            <p class="text-xs text-slate-500 mt-1">Reset link expired.</p>
-                        </div>
-                    </div>
-                </div>
+    <section id="demo" class="py-24 px-6 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-emerald-600 font-bold tracking-wide uppercase text-sm">Interactive Demo</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mt-2">See how fast it really is.</h2>
+                <p class="text-slate-500 mt-2">Follow the instructions to experience the flow.</p>
             </div>
 
-            <div>
-                <h2 class="text-3xl font-bold text-slate-900 mb-6">Your board members are volunteers.</h2>
-                <p class="text-lg text-slate-600 mb-6 leading-relaxed">
-                    They don't have time to sift through work emails, board emails, and other updates.
-                </p>
-                <div class="pl-4 border-l-4 border-emerald-500 bg-white p-4 rounded-r-lg shadow-sm">
-                    <p class="italic text-slate-700">"When you send them a portal link, they ignore it. When they ignore it, you spend hours playing 'Bad Cop' to get a quorum."</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-24 px-6 max-w-6xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-slate-900">The Board Member Experience</h2>
-            <p class="text-slate-500 mt-2 text-lg">They don't log in. They just get it done.</p>
-        </div>
-
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="flex justify-center">
-                <div class="relative w-[280px] h-[560px] bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-4 border-slate-300">
-                    <div class="absolute top-5 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-full z-20"></div>
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                
+                <div class="space-y-8 order-2 lg:order-1">
                     
-                    <div class="w-full h-full bg-white rounded-[2.2rem] overflow-hidden relative">
+                    <div id="step-1-ctrl" class="p-6 bg-white rounded-xl border-2 border-emerald-500 shadow-md transition-all duration-300 transform">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded uppercase">You are the Admin</span>
+                            <span class="text-xs text-slate-400">Step 1 of 3</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Send the Request</h3>
+                        <p class="text-slate-600 mb-4 text-sm">You have a PDF of the minutes ready. Click send to blast it to the board.</p>
+                        <button onclick="triggerNotification()" class="w-full py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition shadow-lg flex justify-center items-center gap-2 group">
+                            <span>Send Minutes for Approval</span>
+                            <svg class="w-4 h-4 text-slate-400 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        </button>
+                    </div>
+
+                    <div id="step-2-ctrl" class="p-6 bg-white rounded-xl border border-slate-100 opacity-50 pointer-events-none transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded uppercase">You are a Board Member</span>
+                            <span class="text-xs text-slate-400">Step 2 of 3</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Tap the Notification</h3>
+                        <p class="text-slate-600 text-sm">Look at the phone. A notification just arrived. Tap it to open the secure link.</p>
+                    </div>
+
+                     <div id="step-3-ctrl" class="p-6 bg-white rounded-xl border border-slate-100 opacity-50 pointer-events-none transition-all duration-300">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded uppercase">You are a Board Member</span>
+                            <span class="text-xs text-slate-400">Step 3 of 3</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Cast Your Vote</h3>
+                        <p class="text-slate-600 text-sm">Review the PDF preview and tap the big green button.</p>
+                    </div>
+                    
+                    <button onclick="resetDemo()" id="reset-btn" class="hidden text-sm text-slate-400 hover:text-slate-600 underline pl-6">Reset Demo</button>
+
+                </div>
+
+                <div class="flex justify-center order-1 lg:order-2">
+                    <div class="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] p-3 shadow-2xl border-4 border-slate-300 ring-1 ring-slate-900/5">
+                        <div class="absolute top-5 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-50"></div>
                         
-                        <div class="phone-screen-container h-full animate-phone-cycle">
+                        <div class="w-full h-full bg-white rounded-[2.2rem] overflow-hidden relative font-sans">
                             
-                            <div class="phone-screen h-full bg-cover bg-center relative flex flex-col justify-start pt-20 px-4" style="background-image: url('https://images.unsplash.com/photo-1542641197-cdc5b5d1923f?auto=format&fit=crop&w=300&q=80');">
-                                <div class="absolute inset-0 bg-black/40"></div>
-                                <div class="text-white text-5xl font-thin text-center z-10 mb-8">9:41</div>
-                                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg z-10">
+                            <div id="screen-lock" class="demo-screen active-screen bg-cover bg-center flex flex-col pt-20 px-4" style="background-image: url('https://images.unsplash.com/photo-1616047006789-b7af5afb8c2e?auto=format&fit=crop&w=600&q=80');">
+                                <div class="absolute inset-0 bg-black/20"></div>
+                                <div class="text-white text-6xl font-thin text-center z-10 mb-4 tracking-tighter">9:41</div>
+                                <div class="text-white text-lg font-medium text-center z-10 opacity-80">Wednesday, Oct 24</div>
+                                
+                                <div id="notification" onclick="openApp()" class="mt-8 mx-2 bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-xl z-20 cursor-pointer transform translate-y-[-150%] opacity-0 notification-toast hover:scale-105">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-5 h-5 bg-emerald-600 rounded-md flex items-center justify-center">
+                                            <div class="w-5 h-5 bg-emerald-600 rounded flex items-center justify-center">
                                                 <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                             </div>
-                                            <span class="text-xs font-bold text-slate-700 uppercase">Greenlight</span>
+                                            <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">Greenlight</span>
                                         </div>
-                                        <span class="text-xs text-slate-500">now</span>
+                                        <span class="text-xs text-slate-600">now</span>
                                     </div>
-                                    <h4 class="font-semibold text-slate-900">Action Required: Nov Minutes</h4>
-                                    <p class="text-sm text-slate-600">Please review and approve the attached minutes.</p>
+                                    <h4 class="font-bold text-slate-900 text-sm">Action Required: Approve Minutes</h4>
+                                    <p class="text-xs text-slate-700 mt-1">Please review and approve the attached Oct Minutes.</p>
                                 </div>
-                            </div>
-    
-                            <div class="phone-screen h-full bg-slate-50 flex flex-col pt-14 px-6 relative">
-                                <div class="mb-6">
-                                    <h3 class="text-xl font-bold text-slate-900">Approve Minutes?</h3>
-                                    <p class="text-sm text-slate-500">November 2023 Board Meeting</p>
-                                </div>
-                                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-8 flex items-center gap-4">
-                                    <div class="w-12 h-16 bg-red-50 border border-red-100 rounded flex items-center justify-center text-red-500">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-medium">Nov_23_Minutes.pdf</div>
-                                        <div class="text-xs text-slate-400">142 KB</div>
-                                    </div>
-                                </div>
-                                <div class="space-y-3 mt-auto mb-12">
-                                    <div class="absolute bottom-32 left-1/2 -translate-x-1/2 w-12 h-12 bg-emerald-500/30 rounded-full animate-ping"></div>
-                                    
-                                    <button class="w-full py-4 bg-emerald-600 text-white text-lg font-bold rounded-xl shadow-lg shadow-emerald-200 relative z-10">
-                                        Tap to Approve
-                                    </button>
-                                    <button class="w-full py-4 bg-white text-slate-600 font-medium border border-slate-200 rounded-xl">
-                                        Request Changes
-                                    </button>
-                                </div>
-                            </div>
-    
-                            <div class="phone-screen h-full bg-emerald-600 flex flex-col items-center justify-center text-white px-6">
-                                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-xl animate-bounce">
-                                    <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                                <h3 class="text-3xl font-bold mb-2">You're done!</h3>
-                                <p class="text-emerald-100 text-center">Your vote has been securely recorded. Thanks for volunteering!</p>
                             </div>
 
-                        </div> </div>
-                </div>
-            </div>
+                            <div id="screen-app" class="demo-screen hidden-screen bg-slate-50 flex flex-col relative">
+                                <div class="bg-white px-6 pt-12 pb-4 border-b border-slate-100 flex justify-between items-center">
+                                    <div class="font-bold text-lg text-slate-900">Greenlight</div>
+                                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">JD</div>
+                                </div>
 
-            <div class="space-y-8">
-                <div class="flex gap-4 items-start">
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex-shrink-0 flex items-center justify-center text-emerald-700 font-bold">1</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">The Notification</h3>
-                        <p class="text-slate-600">They get a push notification or email. FaceID opens it instantly. No passwords to remember.</p>
+                                <div class="p-6 flex-1 flex flex-col">
+                                    <h2 class="text-xl font-bold text-slate-900 leading-tight">Oct 2023 Board Meeting Minutes</h2>
+                                    <p class="text-xs text-slate-500 mt-1 uppercase tracking-wide font-semibold">Due in 2 days</p>
+
+                                    <div class="mt-6 bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex items-start gap-3">
+                                        <div class="w-10 h-12 bg-red-50 border border-red-100 text-red-500 rounded flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-sm font-semibold text-slate-900 truncate">Minutes_Oct_24_Draft_v2.pdf</div>
+                                            <div class="text-xs text-slate-500">142 KB &bull; PDF</div>
+                                            <div class="mt-2 h-16 bg-slate-100 rounded w-full"></div>
+                                            <div class="mt-1 h-2 bg-slate-100 rounded w-2/3"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-auto space-y-3 pb-8">
+                                        <button onclick="castVote()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-emerald-200 active:scale-95 transition-transform">
+                                            Approve Minutes
+                                        </button>
+                                        <button class="w-full py-3 bg-white border border-slate-200 text-slate-600 font-medium rounded-xl hover:bg-slate-50">
+                                            Request Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="screen-success" class="demo-screen hidden-screen bg-emerald-600 flex flex-col items-center justify-center text-white px-6 relative overflow-hidden">
+                                <div class="absolute top-10 left-10 w-2 h-2 bg-yellow-300 rounded-full opacity-50"></div>
+                                <div class="absolute bottom-20 right-10 w-3 h-3 bg-white rounded-full opacity-30"></div>
+                                <div class="absolute top-1/2 left-4 w-2 h-2 bg-emerald-300 rounded-full opacity-60"></div>
+
+                                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-xl animate-bounce">
+                                    <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <h3 class="text-3xl font-bold mb-2">Vote Recorded!</h3>
+                                <p class="text-emerald-100 text-center mb-8">Thanks for volunteering, John.</p>
+                                
+                                <div class="bg-emerald-700/50 rounded-lg p-4 w-full max-w-xs backdrop-blur-sm border border-emerald-500/30">
+                                    <div class="flex justify-between text-xs text-emerald-100 mb-1">
+                                        <span>Status</span>
+                                        <span class="font-bold text-white">Approved</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-emerald-100">
+                                        <span>Time</span>
+                                        <span class="font-bold text-white">9:42 AM</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex-shrink-0 flex items-center justify-center text-emerald-700 font-bold">2</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">The One-Tap Vote</h3>
-                        <p class="text-slate-600">They review the document on their phone and tap a single big button to approve.</p>
-                    </div>
-                </div>
-                <div class="flex gap-4 items-start">
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 flex-shrink-0 flex items-center justify-center text-emerald-700 font-bold">3</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">Done in seconds</h3>
-                        <p class="text-slate-600">They get instant confirmation. You get the completed vote count automatically.</p>
-                    </div>
-                </div>
-                <div class="bg-slate-50 p-6 rounded-xl border-l-4 border-emerald-500 mt-8">
-                    <h4 class="font-bold text-slate-900 flex items-center gap-2 mb-2">
-                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Automated Nudging
-                    </h4>
-                    <p class="text-sm text-slate-600">If they don't tap within 48 hours, Greenlight politely chases them so you don't have to.</p>
                 </div>
             </div>
         </div>
@@ -257,8 +250,8 @@
              <div class="blob bg-emerald-500/20 w-96 h-96 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
 
             <div class="text-center mb-16 relative z-10">
-                <h2 class="text-3xl md:text-4xl font-bold text-white">Your New Admin Center</h2>
-                <p class="text-slate-400 mt-2 text-lg">Clean, focused, and faster than chasing emails. It's your "Todoist" for governance.</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-white">The E.D. Dashboard</h2>
+                <p class="text-slate-400 mt-2 text-lg">Clean, focused, and faster than chasing emails.</p>
             </div>
 
             <div class="relative z-10 rounded-xl overflow-hidden shadow-2xl border border-slate-700 bg-white max-w-5xl mx-auto">
@@ -274,7 +267,7 @@
                     </div>
                 </div>
 
-                <div class="flex h-[600px] bg-slate-50">
+                <div class="flex h-[500px] bg-slate-50">
                     <div class="w-64 bg-white border-r border-slate-100 p-6 hidden md:flex flex-col">
                         <div class="flex items-center gap-2 mb-10">
                             <div class="w-6 h-6 bg-emerald-600 rounded-full"></div>
@@ -289,77 +282,32 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                                 Archived
                             </a>
-                             <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                Board List
-                            </a>
                         </div>
                     </div>
 
                     <div class="flex-1 p-6 md:p-10 overflow-y-auto">
                         <div class="flex justify-between items-center mb-8">
                             <h3 class="text-2xl font-bold text-slate-900">Active Votes</h3>
-                            <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 hover:bg-emerald-700 transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                New Vote Request
+                            <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition">
+                                + New Vote
                             </button>
                         </div>
-
-                        <div class="space-y-4">
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">IN PROGRESS</span>
-                                        <h4 class="text-lg font-bold text-slate-900 mt-2">Nov 2023 Board Minutes</h4>
-                                        <p class="text-sm text-slate-500">Sent Oct 24 &middot; Due Oct 27</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl font-bold text-slate-900">4 / 7</div>
-                                        <div class="text-sm text-slate-500">Voted</div>
-                                    </div>
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">IN PROGRESS</span>
+                                    <h4 class="text-lg font-bold text-slate-900 mt-2">Nov 2023 Board Minutes</h4>
+                                    <p class="text-sm text-slate-500">Sent Oct 24 &middot; Due Oct 27</p>
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-2.5 mb-4">
-                                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 57%"></div>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <div class="flex -space-x-2">
-                                        <div class="w-8 h-8 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-xs text-emerald-800 font-bold" title="Voted">JD</div>
-                                        <div class="w-8 h-8 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-xs text-emerald-800 font-bold" title="Voted">SM</div>
-                                        <div class="w-8 h-8 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs text-slate-500 font-bold relative" title="Waiting">
-                                            AK
-                                            <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>
-                                        </div>
-                                        <div class="w-8 h-8 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs text-slate-500 font-bold relative" title="Waiting">
-                                            BL
-                                            <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>
-                                        </div>
-                                    </div>
-                                    <span class="text-slate-500">Waiting on 3 members. <span class="text-emerald-600 font-medium cursor-pointer hover:underline">Nudge sent today.</span></span>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-slate-900">4 / 7</div>
+                                    <div class="text-sm text-slate-500">Voted</div>
                                 </div>
                             </div>
-
-                             <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition opacity-75">
-                                <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">COMPLETED</span>
-                                        <h4 class="text-lg font-bold text-slate-900 mt-2">FY24 Revised Budget Approval</h4>
-                                        <p class="text-sm text-slate-500">Sent Oct 10 &middot; Closed Oct 12</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl font-bold text-emerald-600">7 / 7</div>
-                                        <div class="text-sm text-slate-500">Approved</div>
-                                    </div>
-                                </div>
-                                 <div class="w-full bg-emerald-100 rounded-full h-2.5 mb-4">
-                                    <div class="bg-emerald-600 h-2.5 rounded-full" style="width: 100%"></div>
-                                </div>
-                                <div class="flex justify-end">
-                                    <button class="text-sm text-emerald-600 font-medium flex items-center gap-1 hover:underline">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                        Download Certificate
-                                    </button>
-                                </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 mb-4">
+                                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 57%"></div>
                             </div>
+                            <span class="text-sm text-slate-500">Waiting on 3 members. <span class="text-emerald-600 font-medium cursor-pointer hover:underline">Nudge sent.</span></span>
                         </div>
                     </div>
                 </div>
@@ -367,100 +315,111 @@
         </div>
     </section>
 
-    <section class="py-20 bg-slate-50">
+    <section class="py-20 bg-white">
         <div class="max-w-4xl mx-auto px-6 text-center">
-            <div class="inline-block p-3 bg-white rounded-full shadow-sm mb-6">
-                <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-            </div>
-            <h2 class="text-3xl font-bold text-slate-900 mb-4">Legally Defensible. Zero Effort.</h2>
-            <p class="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-                Greenlight logs every IP, timestamp, and device. We generate a compliant 
-                <span class="font-semibold text-slate-900">'Certificate of Resolution'</span> PDF for your auditor. It’s safer than email and faster than a portal.
-            </p>
-            
-            <div class="bg-white border border-slate-200 rounded-lg p-4 max-w-lg mx-auto text-left shadow-sm">
-                <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
-                    <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
-                    <span class="text-xs font-mono text-slate-500">certificate_of_resolution.pdf</span>
+            <h2 class="text-3xl font-bold text-slate-900 mb-6">Audit-Ready in Real Time.</h2>
+            <div class="grid md:grid-cols-3 gap-6 text-left">
+                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-2">Timestamped</h4>
+                    <p class="text-sm text-slate-600">Every vote logs UTC time and IP address for legal validity.</p>
                 </div>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-xs font-mono">
-                        <span class="text-slate-500">Board Member:</span>
-                        <span class="text-slate-800">Sarah Jenkins</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-mono">
-                        <span class="text-slate-500">Action:</span>
-                        <span class="text-emerald-600 font-bold">APPROVED</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-mono">
-                        <span class="text-slate-500">Timestamp:</span>
-                        <span class="text-slate-800">2023-10-24 14:02:11 UTC</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-mono">
-                        <span class="text-slate-500">IP Hash:</span>
-                        <span class="text-slate-800">8a9f...e21</span>
-                    </div>
+                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-2">PDF Export</h4>
+                    <p class="text-sm text-slate-600">One click generates a "Certificate of Resolution" for auditors.</p>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-2">$39/mo Flat</h4>
+                    <p class="text-sm text-slate-600">Unlimited users. Unlimited votes. No hidden fees.</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section id="pricing" class="py-24 px-6">
-        <div class="max-w-md mx-auto">
-            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-                <div class="p-8 text-center border-b border-slate-50">
-                    <h3 class="text-lg font-medium text-slate-500 uppercase tracking-wide">Simple Pricing</h3>
-                    <div class="mt-4 flex items-baseline justify-center">
-                        <span class="text-5xl font-extrabold text-slate-900">$39</span>
-                        <span class="text-xl text-slate-500 ml-2">/month</span>
-                    </div>
-                    <p class="text-sm text-slate-400 mt-2">Per organization. Cancel anytime.</p>
-                </div>
-                <div class="p-8 bg-slate-50/50">
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="ml-3 text-slate-700">Unlimited Board Members</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="ml-3 text-slate-700">Unlimited Votes & Polls</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="ml-3 text-slate-700">Full Audit Trails (PDF Export)</span>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="h-6 w-6 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="ml-3 text-slate-700">Automated Email Reminders</span>
-                        </li>
-                    </ul>
-                    <button class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors shadow-lg">
-                        Start Your Free Trial
-                    </button>
-                    <p class="text-center text-xs text-slate-400 mt-4 italic">"Cheaper than one hour of your time."</p>
-                </div>
+            <div class="mt-12">
+                <button class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-slate-800 transition shadow-xl">
+                    Start Your Free Trial
+                </button>
             </div>
         </div>
     </section>
 
     <footer class="py-12 border-t border-slate-100 bg-white">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-2">
-                <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
-                <span class="font-bold text-slate-900">Greenlight</span>
-            </div>
-            
-            <div class="text-sm text-slate-500">
-                &copy; 2024 Greenlight Tools, LLC.
-            </div>
-            
-            <div class="text-sm text-slate-400 flex items-center gap-1">
-                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                Built by a skeptical engineer in NC.
-            </div>
+        <div class="max-w-7xl mx-auto px-6 text-center text-sm text-slate-400">
+            &copy; 2024 Greenlight Tools, LLC. Built by a skeptical engineer in NC.
         </div>
     </footer>
 
+    <script>
+        function triggerNotification() {
+            // UI Updates for Control Panel
+            document.getElementById('step-1-ctrl').classList.remove('border-emerald-500', 'shadow-md');
+            document.getElementById('step-1-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
+            
+            document.getElementById('step-2-ctrl').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('step-2-ctrl').classList.add('border-emerald-500', 'shadow-md');
+
+            // Phone Action
+            const notif = document.getElementById('notification');
+            notif.classList.remove('translate-y-[-150%]', 'opacity-0');
+            notif.classList.add('translate-y-0', 'opacity-100');
+        }
+
+        function openApp() {
+            // UI Updates for Control Panel
+            document.getElementById('step-2-ctrl').classList.remove('border-emerald-500', 'shadow-md');
+            document.getElementById('step-2-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
+
+            document.getElementById('step-3-ctrl').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('step-3-ctrl').classList.add('border-emerald-500', 'shadow-md');
+
+            // Phone Action
+            document.getElementById('screen-lock').classList.remove('active-screen');
+            document.getElementById('screen-lock').classList.add('hidden-screen');
+            
+            document.getElementById('screen-app').classList.remove('hidden-screen');
+            document.getElementById('screen-app').classList.add('active-screen');
+        }
+
+        function castVote() {
+            // UI Updates for Control Panel
+            document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
+            document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
+            
+            document.getElementById('reset-btn').classList.remove('hidden');
+
+            // Phone Action
+            document.getElementById('screen-app').classList.remove('active-screen');
+            document.getElementById('screen-app').classList.add('hidden-screen');
+
+            document.getElementById('screen-success').classList.remove('hidden-screen');
+            document.getElementById('screen-success').classList.add('active-screen');
+        }
+
+        function resetDemo() {
+            // Reset Controls
+            document.getElementById('step-1-ctrl').classList.add('border-emerald-500', 'shadow-md');
+            document.getElementById('step-1-ctrl').classList.remove('opacity-50', 'pointer-events-none', 'border-slate-100');
+
+            document.getElementById('step-2-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
+            document.getElementById('step-2-ctrl').classList.remove('border-emerald-500', 'shadow-md');
+            
+            document.getElementById('step-3-ctrl').classList.add('opacity-50', 'pointer-events-none', 'border-slate-100');
+            document.getElementById('step-3-ctrl').classList.remove('border-emerald-500', 'shadow-md');
+
+            document.getElementById('reset-btn').classList.add('hidden');
+
+            // Reset Phone Screens
+            document.getElementById('screen-success').classList.remove('active-screen');
+            document.getElementById('screen-success').classList.add('hidden-screen');
+            
+            document.getElementById('screen-app').classList.remove('active-screen');
+            document.getElementById('screen-app').classList.add('hidden-screen');
+
+            document.getElementById('screen-lock').classList.remove('hidden-screen');
+            document.getElementById('screen-lock').classList.add('active-screen');
+
+            // Reset Notification
+            const notif = document.getElementById('notification');
+            notif.classList.add('translate-y-[-150%]', 'opacity-0');
+            notif.classList.remove('translate-y-0', 'opacity-100');
+        }
+    </script>
 </body>
 </html>
